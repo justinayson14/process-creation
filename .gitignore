@@ -1,2 +1,8 @@
 # executable
 *.exe
+
+# misc
+comp322_lab1_skeleton.txt
+comp322_lab1.pdf
+.vscode
+processes
