@@ -1,3 +1,14 @@
+// Fall 2024 COMP 322 
+// Lab 1 - Process Creation Hierarchy
+/*
+    Program prints 4 actions for user to pick from. 
+        1. To initialize PCB hierarchy and creates first parent
+        2. Creates child processes for parent by user input
+        3. Destroy descendent processes of parent by user input
+        4. Destroy all PCB and child processes. Quits program
+*/
+
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -22,7 +33,7 @@ void printProcessHierarchy() {
     for(int i = 0; i < MAX_PROCESSES; i++) {
         if (allPCB[i] == NULL)
             continue;
-            
+
         printf("Process id: %d\n", i);
 
         if(allPCB[i]->parentId == -1)
