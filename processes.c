@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_PROCESSES 10
+#define MAX_PROCESSES 5
 
 struct Child{
     int childId;
@@ -29,14 +29,16 @@ void printProcessHierarchy() {
 
         if(allPCB[i]->child == NULL)
             printf("\tNo child process\n");
-        else
+        else {
             ptr = allPCB[i]->child;
             while(ptr != NULL) {
                 printf("\tChild process: %d\n", ptr->childId);
                 ptr = ptr->sibling;
-            }
+            }// end while
+        }// end else
+    }// end for
 
-    }
+    return;
 }// end printProcessHierarchy
 
 void initializeProcessHierarchy() {
@@ -48,8 +50,52 @@ void initializeProcessHierarchy() {
     }
     printProcessHierarchy();
 
+    return;
 }// end initializeProcessHierarchy
 
+void createChild() {
+    int p, q;
+    
+    printf("Enter the parent process id: ");
+    scanf("%d", &p);
+    while (getchar() != '\n');
+
+    if (allPCB[p] == NULL) { 
+        printf("\nERROR: Process does not exist. Try again.\n");
+        return;
+    }
+
+    for(q = p+1; q <= MAX_PROCESSES; q++) {
+        if(allPCB[q] == NULL)
+            break;
+    }
+    if (q == MAX_PROCESSES) {
+        printf("\nERROR: No PCB's are available. Try again.\n");
+        return;
+    }
+
+    allPCB[q] = (PCB*)malloc(sizeof(PCB));
+    allPCB[q]->parentId = p;
+    allPCB[q]->child = NULL; 
+
+    struct Child *temp = (struct Child*)malloc(sizeof(struct Child));
+    temp->childId = q;
+    temp->sibling = NULL;
+
+    if (allPCB[p]->child == NULL)
+        allPCB[p]->child = temp;
+    else {
+        struct Child *ptr = allPCB[p]->child;
+        while(ptr->sibling != NULL)
+            ptr = ptr->sibling;
+        
+        ptr->sibling = temp;
+    }
+
+    printProcessHierarchy();
+    return;
+
+}
 
 int main(void) {
 
@@ -63,27 +109,28 @@ int main(void) {
         printf("3) Destroy all descendants of parent process\n");
         printf("4) Quit program and free memory\n\n");
 
-        printf("Input: ");
+        printf("Selection: ");
         input = getchar();
         while (getchar() != '\n');
 
         switch (input)
         {
         case '1':
-            printf("Initializing process hierarchy...\n");
+            printf("\nInitializing process hierarchy...\n");
             initializeProcessHierarchy();
             break;
         case '2':
-            printf("Creating new child process...\n");
+            printf("\nCreating new child process...\n");
+            createChild();
             break;
         case '3':
-            printf("Destroying all descendants of parent process...\n");
+            printf("\nDestroying all descendants of parent process...\n");
             break;
         case '4':
-            printf("Quitting program and freeing memory...\n");
+            printf("\nQuitting program and freeing memory...\n");
             break;
         default:
-            printf("INVALID INPUT! Please re-enter input...\n");
+            printf("\nINVALID INPUT! Please re-enter input...\n");
             break;
         }
     } while (input != '4');
